@@ -1,0 +1,4 @@
+# Human replays only, Gen 1 OU only (no self-play data).
+replay_weight: 1.0
+formats:
+  - gen1ou
