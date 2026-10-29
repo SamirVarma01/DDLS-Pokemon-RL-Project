@@ -33,6 +33,8 @@ from metamon.rl.train import add_cli, create_offline_rl_trainer, WANDB_PROJECT, 
 from metamon.rl.dataset_config import load_dataset_config, build_dataset
 from metamon.rl.metamon_to_amago import MetamonAMAGOExperiment
 
+import py312_compat  # noqa: F401  (amago float traj_save_len vs Python 3.12 randint)
+
 parser = ArgumentParser()
 add_cli(parser)
 parser.add_argument("--split", choices=["train", "none"], default="train")

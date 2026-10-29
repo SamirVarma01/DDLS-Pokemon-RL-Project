@@ -29,6 +29,8 @@ from metamon.tokenizer import get_tokenizer
 from metamon.rl.metamon_to_amago import MetamonAMAGODataset
 from metamon.rl.pretrained import LocalPretrainedModel, get_pretrained_model
 
+import py312_compat  # noqa: F401  (amago float traj_save_len vs Python 3.12 randint)
+
 p = ArgumentParser()
 g = p.add_mutually_exclusive_group(required=True)
 g.add_argument("--run_name")
