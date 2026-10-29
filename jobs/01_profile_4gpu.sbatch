@@ -10,7 +10,8 @@
 #SBATCH -t 00:25:00
 #SBATCH -o logs/%x-%j.out
 source "$SLURM_SUBMIT_DIR/common.sh"
-L="torchrun --standalone --nproc_per_node=4 train_scaling.py"
+# venv python, not bare `torchrun` (module script -> workers use module python, no metamon)
+L="python -m torch.distributed.run --standalone --nproc_per_node=4 train_scaling.py"
 # strong scaling: same global batch as the 1-GPU baseline (64 = 4 x 16)
 $L --run_name prof4_strong64_$SLURM_JOB_ID $COMMON_ARGS --attn $ATTN \
    --batch_size_per_gpu 16 --dloader_workers 8 --epochs 1 --max_steps 400

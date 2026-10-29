@@ -11,5 +11,6 @@
 #SBATCH -t 01:15:00
 #SBATCH -o logs/%x-%j.out
 source "$SLURM_SUBMIT_DIR/common.sh"
-torchrun --standalone --nproc_per_node=4 train_scaling.py --run_name bc4_gen1ou $COMMON_ARGS --attn $ATTN --log \
+# venv python, not bare `torchrun` (module script -> workers use module python, no metamon)
+python -m torch.distributed.run --standalone --nproc_per_node=4 train_scaling.py --run_name bc4_gen1ou $COMMON_ARGS --attn $ATTN --log \
   --batch_size_per_gpu 16 --dloader_workers 8 --steps_per_epoch 5000 --epochs 200 --ckpt_interval 1

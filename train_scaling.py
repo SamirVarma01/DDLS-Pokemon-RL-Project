@@ -10,7 +10,7 @@ Does not modify metamon/amago. Adds:
 
 Launch:
   1 GPU : python train_scaling.py <args>
-  N GPU : torchrun --nproc_per_node=4 train_scaling.py <args>   (accelerate reads torchrun env vars)
+  N GPU : python -m torch.distributed.run --nproc_per_node=4 train_scaling.py <args>   (accelerate reads torchrun env vars)
 """
 import csv
 import os
