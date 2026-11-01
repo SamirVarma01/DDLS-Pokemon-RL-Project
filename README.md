@@ -24,6 +24,15 @@ sbatch -A $NERSC_PROJ jobs/05_heldout_eval.sbatch     # after 02/03 finish
 # optional: jobs/04_smoke_8gpu.sbatch, jobs/06_heuristic_eval.sbatch (EP=<epoch>)
 ```
 If `sbatch` rejects the account, use the GPU account name Iris shows (sometimes `mXXXX_g`).
+Before 02/03: `git pull origin main` (Python 3.12 + launcher fixes) and `wandb login` (they run with `--log`).
+
+## Sharing across the team (login node, no GPU charge)
+Each person's checkpoints and CSVs live in their own `$SCRATCH` / `results/`. To combine them:
+```bash
+bash share_results.sh     # everyone, after each of your jobs: copies ckpts + CSVs to /global/cfs/cdirs/m4431/metamon-perlmutter
+# job 05 then finds 02's and 03's checkpoints there, whoever submits it. After it, run share_results.sh again.
+source common.sh && RESULTS_DIR=/global/cfs/cdirs/m4431/metamon-perlmutter/results python plot_results.py   # team charts
+```
 
 ## Budget (A100-hours; shared QOS bills only the GPUs you take, debug/regular bill the whole node = 4 GPUs)
 | Job | Owner | GPU-h |

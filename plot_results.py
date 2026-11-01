@@ -2,6 +2,8 @@
 Report charts from $RESULTS_DIR (default ./results). Runs on a login node, no GPU needed:
   source common.sh && python plot_results.py
 Writes $RESULTS_DIR/plots/*.png and summary.txt. A chart whose runs don't exist yet is skipped.
+Whole team's results (after everyone runs share_results.sh):
+  source common.sh && RESULTS_DIR=/global/cfs/cdirs/m4431/metamon-perlmutter/results python plot_results.py
 
   scaling.png               strong (global batch 64) + weak (32/GPU) scaling vs ideal, 400-step profiling runs
   batch_sweep.png           1-GPU throughput vs per-GPU batch size, plus the TF32 point
@@ -57,13 +59,13 @@ def load_throughput():
 
 
 def load_heldout():
-    path = os.path.join(RESULTS, "heldout_eval.csv")
-    if not os.path.exists(path):
-        return []
+    # heldout_eval.csv, plus heldout_eval_<user>.csv copies from share_results.sh, oldest first
+    paths = sorted(glob.glob(os.path.join(RESULTS, "heldout_eval*.csv")), key=os.path.getmtime)
     latest = {}  # reruns append duplicate rows; keep the last one per (model, epoch, min_date)
-    with open(path) as f:
-        for r in csv.DictReader(f):
-            latest[(r["model"], int(r["epoch"]), r["format"], r["min_date"])] = r
+    for path in paths:
+        with open(path) as f:
+            for r in csv.DictReader(f):
+                latest[(r["model"], int(r["epoch"]), r["format"], r["min_date"])] = r
     return [dict(model=m, epoch=e, min_date=d, top1=float(r["top1"]), top2=float(r["top2"]),
                  nll=float(r["nll"]), n=int(r["n_actions"])) for (m, e, _, d), r in latest.items()]
 
